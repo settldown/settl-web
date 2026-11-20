@@ -1,4 +1,4 @@
-import type { Link } from "./types";
+import type { Link, SocialLink } from "./types";
 
 const email = "business@settlhere.com";
 const calendly = "https://calendly.com/business-settlhere/30min";
@@ -24,5 +24,13 @@ export const site = {
     href: calendly,
     external: true,
   } satisfies Link,
+  socials: [
+    { label: "Settl on X", href: "https://x.com/settlhere", icon: "x" },
+    {
+      label: "Settl on Instagram",
+      href: "https://www.instagram.com/settlhere/",
+      icon: "instagram",
+    },
+  ] satisfies SocialLink[],
   skipLink: "Skip to content",
 };

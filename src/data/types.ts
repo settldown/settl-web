@@ -7,6 +7,15 @@ export interface Link {
   external?: boolean;
 }
 
+export type IconName = "calendar" | "check" | "x" | "instagram";
+
+export interface SocialLink {
+  /** Read by screen readers, since the link shows only an icon. */
+  label: string;
+  href: string;
+  icon: IconName;
+}
+
 export interface PageMeta {
   title: string;
   description: string;

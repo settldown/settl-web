@@ -1,5 +1,6 @@
 ---
 import { site } from "../../data/site";
+import Icon from "../ui/Icon.astro";
 import Logo from "../ui/Logo.astro";
 
 interface Props {
@@ -16,7 +17,25 @@ const { divider = false } = Astro.props;
       <Logo size="large" link={false} />
       <p>{site.tagline}</p>
     </div>
-    <a class="email" href={site.emailHref}>{site.email}</a>
+    <div class="contact">
+      <a class="email" href={site.emailHref}>{site.email}</a>
+      <ul class="socials" role="list">
+        {
+          site.socials.map((social) => (
+            <li>
+              <a
+                href={social.href}
+                aria-label={social.label}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Icon name={social.icon} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </div>
 </footer>
 
@@ -36,6 +55,40 @@ const { divider = false } = Astro.props;
 
   .brand p {
     font-size: var(--text-small);
+  }
+
+  .contact {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 40rem) {
+    .contact {
+      justify-items: end;
+    }
+  }
+
+  .socials {
+    display: flex;
+    gap: var(--space-2);
+    padding: 0;
+    list-style: none;
+  }
+
+  .socials a {
+    display: grid;
+    place-items: center;
+    width: var(--tap-target);
+    height: var(--tap-target);
+    border: var(--border-field) solid var(--color-ink);
+    border-radius: var(--radius-pill);
+    transition: background-color 0.15s ease;
+  }
+
+  .socials a:hover {
+    background: var(--color-ink);
+    color: var(--color-beige);
   }
 
   .email {

@@ -21,7 +21,8 @@
    - Anything else: Got a task that eats up your time? There’s a good chance we can make it faster. Link "Tell us about it" to `#contact`.
 4. Free banner (dark): "We’ll come by, see how you work, and start with one small fix. While we’re getting started, our help is free." Button "Get in touch".
 5. Let’s talk (`#contact`): "Tell us what takes up your time and we’ll reply to set up a quick visit. Or pick a time that suits you." Button "Book a 30-minute call" (Calendly). Form: name, email, message.
-6. Footer: wordmark, tagline "Tech help for local businesses", email.
+6. Footer: wordmark, tagline "Tech help for local businesses", email, and icon links to X (https://x.com/settlhere) and Instagram (https://www.instagram.com/settlhere/) under the email.
+   - The footer is the same on every page.
 
 ## Audience pages (`for/[audience].astro`)
 

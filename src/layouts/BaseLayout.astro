@@ -42,6 +42,7 @@ const jsonLd = {
   description: site.description,
   url: siteUrl.href,
   email: site.email,
+  sameAs: site.socials.map((social) => social.href),
   makesOffer: services.map((service) => ({
     "@type": "Offer",
     itemOffered: { "@type": "Service", name: service.title },
