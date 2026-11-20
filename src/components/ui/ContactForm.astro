@@ -1,5 +1,6 @@
 ---
 import { contactFormFields, formText, homeFormFields } from "../../data/forms";
+import { siteEnv, siteOrigin } from "../../data/deploy";
 import { site } from "../../data/site";
 import Button from "./Button.astro";
 import FormField from "./FormField.astro";
@@ -29,6 +30,8 @@ const fields = extended ? contactFormFields : homeFormFields;
   data-messages={JSON.stringify(formText.messages)}
 >
   <input type="hidden" name="page" value={page} />
+  <input type="hidden" name="env" value={siteEnv} />
+  <input type="hidden" name="returnTo" value={siteOrigin} />
   <div class="honeypot" aria-hidden="true">
     <label for={`${idPrefix}-website`}>{formText.honeypot}</label>
     <input

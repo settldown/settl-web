@@ -41,7 +41,7 @@
 - No React, Vue or other UI framework. Use Astro components and small vanilla `<script>` blocks.
 - Fonts: Manrope (headings) and Nunito Sans (body), self-hosted with Fontsource. No Google Fonts requests.
 - Sitemap: `@astrojs/sitemap`.
-- Hosting: Vercel (likely). Connect the Squarespace domain with the DNS records Vercel provides.
+- Hosting: Vercel. Connect the Squarespace domain with the DNS records Vercel provides.
 - Form handling: Google Apps Script web app that saves each message to a Google Sheet and emails a copy. Details in the Forms section.
 - Analytics: not decided yet. Do not add any tracking script until we choose one.
 - Do not add a new dependency without asking first.
@@ -201,8 +201,20 @@ settl/
 - Look for repeated markup or CSS you added, and move it into a shared component or token.
 - If you add a test, it follows the 400-line limit like every other file.
 
+## Environments
+
+- Prod: the `main` branch, deployed by Vercel to settlhere.com. Public.
+- Staging: the `staging` branch, deployed by Vercel to its branch URL. Behind Vercel login (Deployment Protection).
+- Both use the same Apps Script form. Each message is tagged with the site it came from: staging emails start with "[Staging]".
+- Staging and local builds add `noindex` so search engines skip them.
+
 ## Git
 
+- Never commit straight to `main` or `staging`.
+- Every feature or fix gets its own branch from `main` (for example `add-socials`).
+- To test, merge the feature branch into `staging` and push. Vercel deploys it to the staging site.
+- Open a PR from the feature branch to `main` only after the change is approved on staging.
+- Merge to `main` only through that PR. Prod updates when it merges.
 - Small commits, one change each, with a clear message (for example "Add services checklist component").
 - Do not commit build output (`dist/`), `node_modules/` or `.env`.
 
@@ -210,8 +222,6 @@ settl/
 
 - Real photos: home hero, services banner, about photo, two headshots, contact photo.
 - Team names and bios.
-- Confirm Vercel as the host.
-- Set up the Google Sheet and deploy the Apps Script web app.
 - Analytics tool (discuss later).
 - Rename the Calendly event to something like "Settl intro call".
 - Decide whether to name a service area for local SEO (site copy currently names no location).
