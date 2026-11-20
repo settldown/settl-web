@@ -50,8 +50,7 @@
 
 ```
 settl/
-├── apps-script/
-│   └── Code.gs            form handler, deployed to Google Apps Script
+├── apps-script/          git-ignored local copy of the form handler (Code.gs)
 ├── public/
 │   ├── favicon.svg
 │   └── robots.txt
@@ -180,7 +179,8 @@ settl/
 
 - Forms post to a Google Apps Script web app. Its URL lives in `PUBLIC_FORM_ENDPOINT`.
 - The script saves each message as a row in a Google Sheet (date, page, name, email, business, type, message) and emails a copy to business@settlhere.com.
-- Keep the Apps Script code in the repo at `apps-script/Code.gs` so it is versioned. Deploy it as a web app that anyone can access.
+- The Apps Script code is not in the repo. The Apps Script editor holds the live copy. A local copy at `apps-script/Code.gs` is git-ignored.
+- Deploy it as a web app that anyone can access. After changing the form part, deploy a new version so the URL stays the same.
 - With JavaScript: submit with `fetch`, show "Sending…" while waiting (Apps Script can take a few seconds), then an inline "Message sent" note or an error.
 - Without JavaScript: the form still posts normally, and the script responds by sending the visitor to a `/thanks` page on our site.
 - Show clear error messages next to the field that needs fixing.
