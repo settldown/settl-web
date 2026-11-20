@@ -1,0 +1,50 @@
+---
+import { homeHero, type HeroContent } from "../../data/home";
+import Section from "../layout/Section.astro";
+import PhotoPlaceholder from "../ui/PhotoPlaceholder.astro";
+import SplitLayout from "../ui/SplitLayout.astro";
+import TypingHeadline from "../ui/TypingHeadline.astro";
+
+interface Props {
+  content?: HeroContent;
+}
+
+const { content = homeHero } = Astro.props;
+---
+
+<Section tone="lime" space="compact">
+  <SplitLayout>
+    <div class="copy">
+      <p class="eyebrow">{content.eyebrow}</p>
+      {
+        content.typing ? (
+          <TypingHeadline {...content.typing} />
+        ) : (
+          <h1 class="fixed">{content.heading}</h1>
+        )
+      }
+      <p class="lead">{content.lead}</p>
+    </div>
+    <PhotoPlaceholder slot="end" {...content.photo} eager />
+  </SplitLayout>
+</Section>
+
+<style>
+  .copy {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .eyebrow {
+    font-size: var(--text-small);
+    font-weight: var(--weight-bold);
+  }
+
+  .fixed {
+    max-width: 13ch;
+  }
+
+  .lead {
+    font-size: var(--text-lead);
+  }
+</style>

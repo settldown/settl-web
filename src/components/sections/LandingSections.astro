@@ -1,0 +1,31 @@
+---
+import {
+  anythingElse,
+  helpHeading,
+  homeBanner,
+  homeHelpItems,
+  homeHero,
+  type HeroContent,
+} from "../../data/home";
+import type { Feature } from "../../data/types";
+import Section from "../layout/Section.astro";
+import CtaBand from "../ui/CtaBand.astro";
+import ContactSection from "./ContactSection.astro";
+import FeatureGrid from "./FeatureGrid.astro";
+import HomeHero from "./HomeHero.astro";
+
+interface Props {
+  hero?: HeroContent;
+  /** “Where AI can help” items. “Anything else” is added after them. */
+  items?: Feature[];
+}
+
+const { hero = homeHero, items = homeHelpItems } = Astro.props;
+---
+
+<HomeHero content={hero} />
+<FeatureGrid id="help" {...helpHeading} items={[...items, anythingElse]} />
+<Section space="flush-top">
+  <CtaBand cta={homeBanner} />
+</Section>
+<ContactSection />

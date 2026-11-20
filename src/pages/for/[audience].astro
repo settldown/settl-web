@@ -1,0 +1,29 @@
+---
+import type { GetStaticPaths } from "astro";
+import LandingSections from "../../components/sections/LandingSections.astro";
+import { audiences, type Audience } from "../../data/audiences";
+import { heroLead, heroPhoto, homeNavCta } from "../../data/home";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const getStaticPaths = (() =>
+  audiences.map((audience) => ({
+    params: { audience: audience.slug },
+    props: { audience },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  audience: Audience;
+}
+
+const { audience } = Astro.props;
+const hero = {
+  eyebrow: audience.label,
+  heading: audience.headline,
+  lead: heroLead,
+  photo: heroPhoto,
+};
+---
+
+<BaseLayout {...audience.meta} tone="lime" navCta={homeNavCta}>
+  <LandingSections hero={hero} items={audience.items} />
+</BaseLayout>

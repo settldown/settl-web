@@ -1,0 +1,9 @@
+---
+import ContactHero from "../components/sections/ContactHero.astro";
+import { contactMeta } from "../data/contact";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout {...contactMeta} tone="beige" footerDivider>
+  <ContactHero />
+</BaseLayout>

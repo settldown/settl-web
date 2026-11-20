@@ -1,0 +1,54 @@
+---
+import type { TeamMember } from "../../data/team";
+import Section from "../layout/Section.astro";
+import CardGrid from "../ui/CardGrid.astro";
+import PhotoPlaceholder from "../ui/PhotoPlaceholder.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+
+interface Props {
+  heading: string;
+  members?: TeamMember[];
+}
+
+const { heading, members = [] } = Astro.props;
+const id = "team";
+---
+
+<Section tone="beige" labelledby={id}>
+  <SectionHeading id={id} heading={heading} />
+  <CardGrid size="team">
+    {
+      members.map((member) => (
+        <li class="member">
+          <PhotoPlaceholder
+            {...member.photo}
+            sizes="(min-width: 640px) 432px, 100vw"
+          />
+          <h3>{member.name}</h3>
+          <p class="role">{member.role}</p>
+          <p class="bio">{member.bio}</p>
+        </li>
+      ))
+    }
+  </CardGrid>
+</Section>
+
+<style>
+  .member {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .member h3 {
+    margin-top: var(--space-3);
+  }
+
+  .role {
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+
+  .bio {
+    font-size: var(--text-small);
+  }
+</style>

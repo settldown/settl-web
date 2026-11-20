@@ -1,0 +1,24 @@
+---
+import type { Feature, Tone } from "../../data/types";
+import Section from "../layout/Section.astro";
+import CardGrid from "../ui/CardGrid.astro";
+import RuleCard from "../ui/RuleCard.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+
+interface Props {
+  id: string;
+  heading: string;
+  intro?: string;
+  items?: Feature[];
+  tone?: Tone;
+}
+
+const { id, heading, intro, items = [], tone = "beige" } = Astro.props;
+---
+
+<Section tone={tone} labelledby={id}>
+  <SectionHeading id={id} heading={heading} intro={intro} />
+  <CardGrid>
+    {items.map((item) => <RuleCard item={item} />)}
+  </CardGrid>
+</Section>

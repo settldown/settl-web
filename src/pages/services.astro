@@ -1,0 +1,23 @@
+---
+import IntroSplit from "../components/sections/IntroSplit.astro";
+import PhotoBanner from "../components/sections/PhotoBanner.astro";
+import ServicesList from "../components/sections/ServicesList.astro";
+import Section from "../components/layout/Section.astro";
+import CtaBand from "../components/ui/CtaBand.astro";
+import {
+  servicesBanner,
+  servicesCta,
+  servicesIntro,
+  servicesMeta,
+} from "../data/services";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout {...servicesMeta} tone="cream">
+  <PhotoBanner photo={servicesBanner} />
+  <IntroSplit {...servicesIntro} />
+  <ServicesList />
+  <Section tone="cream" space="flush-top" labelledby="services-cta">
+    <CtaBand cta={servicesCta} headingId="services-cta" />
+  </Section>
+</BaseLayout>

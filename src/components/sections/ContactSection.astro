@@ -1,0 +1,39 @@
+---
+import { homeTalk } from "../../data/home";
+import { site } from "../../data/site";
+import Section from "../layout/Section.astro";
+import Button from "../ui/Button.astro";
+import ContactForm from "../ui/ContactForm.astro";
+import Icon from "../ui/Icon.astro";
+import SplitLayout from "../ui/SplitLayout.astro";
+
+interface Props {
+  content?: typeof homeTalk;
+}
+
+const { content = homeTalk } = Astro.props;
+const headingId = `${content.id}-heading`;
+---
+
+<Section tone="lime" id={content.id} labelledby={headingId}>
+  <SplitLayout align="start">
+    <div class="copy">
+      <h2 id={headingId}>{content.heading}</h2>
+      <p>{content.text}</p>
+      <Button href={site.bookCall.href} variant="outline" external>
+        <Icon slot="icon" name="calendar" />
+        {site.bookCall.label}
+      </Button>
+    </div>
+    <ContactForm slot="end" idPrefix="talk" />
+  </SplitLayout>
+</Section>
+
+<style>
+  .copy {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-5);
+    max-width: var(--measure);
+  }
+</style>

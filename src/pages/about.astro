@@ -1,0 +1,19 @@
+---
+import AboutHero from "../components/sections/AboutHero.astro";
+import FeatureGrid from "../components/sections/FeatureGrid.astro";
+import TeamSection from "../components/sections/TeamSection.astro";
+import Section from "../components/layout/Section.astro";
+import CtaBand from "../components/ui/CtaBand.astro";
+import { aboutCta, aboutHow, aboutMeta, aboutTeamHeading } from "../data/about";
+import { team } from "../data/team";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout {...aboutMeta} tone="beige">
+  <AboutHero />
+  <FeatureGrid id="how" tone="cream" {...aboutHow} />
+  <TeamSection heading={aboutTeamHeading} members={team} />
+  <Section tone="lime" labelledby="about-cta">
+    <CtaBand cta={aboutCta} tone="plain" headingId="about-cta" />
+  </Section>
+</BaseLayout>

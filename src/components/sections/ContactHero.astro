@@ -1,0 +1,36 @@
+---
+import { contactHero } from "../../data/contact";
+import { site } from "../../data/site";
+import Section from "../layout/Section.astro";
+import ContactForm from "../ui/ContactForm.astro";
+import PhotoPlaceholder from "../ui/PhotoPlaceholder.astro";
+import SplitLayout from "../ui/SplitLayout.astro";
+
+const content = contactHero;
+---
+
+<Section tone="beige" space="compact">
+  <SplitLayout align="start">
+    <div class="copy">
+      <h1>{content.heading}</h1>
+      <p class="lead">
+        {content.leadBefore}<a href={site.emailHref}>{site.email}</a>{
+          content.leadAfter
+        }
+      </p>
+      <ContactForm extended idPrefix="contact" />
+    </div>
+    <PhotoPlaceholder slot="end" {...content.photo} eager />
+  </SplitLayout>
+</Section>
+
+<style>
+  .copy {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .lead {
+    font-size: var(--text-lead);
+  }
+</style>

@@ -1,0 +1,86 @@
+---
+import "@fontsource/manrope/latin-500.css";
+import "@fontsource/manrope/latin-600.css";
+import "@fontsource/nunito-sans/latin-400.css";
+import "@fontsource/nunito-sans/latin-600.css";
+import "@fontsource/nunito-sans/latin-700.css";
+import "../styles/tokens.css";
+import "../styles/global.css";
+import headingFont from "@fontsource/manrope/files/manrope-latin-500-normal.woff2?url";
+import Footer from "../components/layout/Footer.astro";
+import Nav from "../components/layout/Nav.astro";
+import { services } from "../data/services";
+import { site } from "../data/site";
+import type { Link, Tone } from "../data/types";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Background of the header and top of the page. */
+  tone?: Tone;
+  footerDivider?: boolean;
+  noindex?: boolean;
+  navCta?: Link;
+}
+
+const {
+  title = site.name,
+  description = site.description,
+  tone = "beige",
+  footerDivider = false,
+  noindex = false,
+  navCta,
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL(site.url);
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: site.name,
+  description: site.description,
+  url: siteUrl.href,
+  email: site.email,
+  makesOffer: services.map((service) => ({
+    "@type": "Offer",
+    itemOffered: { "@type": "Service", name: service.title },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="preload"
+      href={headingFont}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class={`tone-${tone}`}>
+    <a class="skip-link" href="#main">{site.skipLink}</a>
+    <Nav tone={tone} cta={navCta} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer divider={footerDivider} />
+  </body>
+</html>

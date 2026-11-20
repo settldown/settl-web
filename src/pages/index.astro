@@ -1,0 +1,9 @@
+---
+import LandingSections from "../components/sections/LandingSections.astro";
+import { homeMeta, homeNavCta } from "../data/home";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout {...homeMeta} tone="lime" navCta={homeNavCta}>
+  <LandingSections />
+</BaseLayout>

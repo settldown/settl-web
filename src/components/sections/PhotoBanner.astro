@@ -1,0 +1,19 @@
+---
+import type { PhotoSlot } from "../../data/types";
+import Section from "../layout/Section.astro";
+import PhotoPlaceholder from "../ui/PhotoPlaceholder.astro";
+
+interface Props {
+  photo: PhotoSlot;
+}
+
+const { photo } = Astro.props;
+---
+
+<Section tone="cream" space="compact">
+  <PhotoPlaceholder
+    {...photo}
+    sizes="(min-width: 1280px) 1280px, 100vw"
+    eager
+  />
+</Section>

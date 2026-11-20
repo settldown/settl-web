@@ -1,0 +1,14 @@
+---
+import Section from "../components/layout/Section.astro";
+import Button from "../components/ui/Button.astro";
+import SectionHeading from "../components/ui/SectionHeading.astro";
+import { thanks, thanksMeta } from "../data/contact";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout {...thanksMeta} tone="beige" footerDivider noindex>
+  <Section>
+    <SectionHeading level="h1" heading={thanks.heading} intro={thanks.text} />
+    <Button href={thanks.button.href}>{thanks.button.label}</Button>
+  </Section>
+</BaseLayout>

@@ -1,0 +1,13 @@
+---
+import { services, servicesListIntro } from "../../data/services";
+import Section from "../layout/Section.astro";
+import CheckList from "../ui/CheckList.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+
+const id = "services-list";
+---
+
+<Section tone="cream" space="flush-top" labelledby={id}>
+  <SectionHeading id={id} {...servicesListIntro} />
+  <CheckList items={services} />
+</Section>

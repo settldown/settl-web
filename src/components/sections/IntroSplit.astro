@@ -1,0 +1,26 @@
+---
+import type { Tone } from "../../data/types";
+import Section from "../layout/Section.astro";
+import SplitLayout from "../ui/SplitLayout.astro";
+
+interface Props {
+  heading: string;
+  text: string;
+  tone?: Tone;
+}
+
+const { heading, text, tone = "cream" } = Astro.props;
+---
+
+<Section tone={tone} space="flush-top">
+  <SplitLayout align="start">
+    <h1>{heading}</h1>
+    <p slot="end">{text}</p>
+  </SplitLayout>
+</Section>
+
+<style>
+  p {
+    font-size: var(--text-lead);
+  }
+</style>
