@@ -9,6 +9,7 @@ import "../styles/global.css";
 import headingFont from "@fontsource/manrope/files/manrope-latin-500-normal.woff2?url";
 import Footer from "../components/layout/Footer.astro";
 import Nav from "../components/layout/Nav.astro";
+import { isProduction } from "../data/deploy";
 import { services } from "../data/services";
 import { site } from "../data/site";
 import type { Link, Tone } from "../data/types";
@@ -58,7 +59,7 @@ const jsonLd = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {(noindex || !isProduction) && <meta name="robots" content="noindex" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link

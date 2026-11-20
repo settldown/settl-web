@@ -1,0 +1,24 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [staging]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Type check and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx astro check
+      - run: npx prettier --check .
+      - run: npm run build

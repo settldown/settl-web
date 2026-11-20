@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
@@ -8,4 +8,20 @@ export default defineConfig({
   trailingSlash: "never",
   build: { format: "file" },
   integrations: [sitemap({ filter: (page) => !page.includes("/thanks") })],
+  env: {
+    schema: {
+      // Set by Vercel during the build: "production", "preview" or "development".
+      VERCEL_ENV: envField.string({
+        context: "server",
+        access: "public",
+        optional: true,
+      }),
+      // Set by Vercel: the branch's own URL, without https://.
+      VERCEL_BRANCH_URL: envField.string({
+        context: "server",
+        access: "public",
+        optional: true,
+      }),
+    },
+  },
 });
