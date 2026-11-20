@@ -212,11 +212,13 @@ settl/
 
 - Never commit straight to `main` or `staging`.
 - Every feature or fix gets its own branch from `main` (for example `add-socials`).
-- To test, merge the feature branch into `staging` and push. Vercel deploys it to the staging site.
+- To test, open a PR from the feature branch to `staging`. Merge it once the check passes. Vercel deploys staging on every merge.
 - Open a PR from the feature branch to `main` only after the change is approved on staging.
 - Merge to `main` only through that PR. Prod updates when it merges.
 - GitHub enforces this on `main`: a PR, 1 approval from the other co-founder, and the "Type check and build" check must pass. Squash merge only.
+- GitHub enforces this on `staging`: a PR and the "Type check and build" check. No approval needed.
 - `main` and `staging` cannot be force-pushed or deleted.
+- Feature branches are not deleted automatically, because each one has a PR to `staging` and then one to `main`. Delete the branch after its `main` PR merges.
 - The check lives in `.github/workflows/check.yml`. It runs `astro check`, Prettier and the build.
 - Small commits, one change each, with a clear message (for example "Add services checklist component").
 - Do not commit build output (`dist/`), `node_modules/` or `.env`.
