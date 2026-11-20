@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://settlhere.com/sitemap-index.xml
