@@ -1,0 +1,39 @@
+---
+import type { Tone } from "../../data/types";
+import Container from "./Container.astro";
+
+interface Props {
+  tone?: Tone;
+  id?: string;
+  labelledby?: string;
+  /** "compact" uses smaller padding. "flush-top" removes top padding. */
+  space?: "default" | "compact" | "flush-top";
+}
+
+const { tone = "beige", id, labelledby, space = "default" } = Astro.props;
+---
+
+<section
+  id={id}
+  aria-labelledby={labelledby}
+  class:list={["section", `tone-${tone}`, `space-${space}`]}
+>
+  <Container>
+    <slot />
+  </Container>
+</section>
+
+<style>
+  .section {
+    padding-block: var(--section-pad);
+    scroll-margin-top: var(--space-4);
+  }
+
+  .space-compact {
+    padding-block: var(--section-pad-compact);
+  }
+
+  .space-flush-top {
+    padding-top: 0;
+  }
+</style>

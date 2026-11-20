@@ -1,0 +1,50 @@
+---
+interface Props {
+  before?: string;
+  prefix?: string;
+  words?: string[];
+  after?: string;
+}
+
+const { before = "", prefix = "", words = [], after = "" } = Astro.props;
+---
+
+<h1>
+  {before}{" "}<span class="line"
+    >{prefix}{" "}<span data-typing data-words={JSON.stringify(words)}
+      >{words[0]}</span
+    ><span class="cursor" aria-hidden="true"></span></span
+  >{" "}{after}
+</h1>
+
+<script>
+  import { startTyping } from "../../scripts/typing";
+  startTyping();
+</script>
+
+<style>
+  .line {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .cursor {
+    display: none;
+    width: var(--cursor-width);
+    height: 0.82em;
+    margin-inline-start: 0.05em;
+    vertical-align: -0.04em;
+    background: currentColor;
+    animation: blink 1s steps(1) infinite;
+  }
+
+  :global(.is-typing) .cursor {
+    display: inline-block;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+</style>

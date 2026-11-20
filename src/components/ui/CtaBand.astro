@@ -1,0 +1,67 @@
+---
+import type { Cta } from "../../data/types";
+import Button from "./Button.astro";
+
+interface Props {
+  cta: Cta;
+  /** "ink" is a dark box. "plain" sits on the section color. */
+  tone?: "ink" | "plain";
+  headingId?: string;
+}
+
+const { cta, tone = "ink", headingId } = Astro.props;
+---
+
+<div class:list={["band", `band--${tone}`]}>
+  <div class="copy">
+    {cta.heading && <h2 id={headingId}>{cta.heading}</h2>}
+    <p class:list={{ statement: !cta.heading }}>{cta.text}</p>
+  </div>
+  <Button
+    href={cta.button.href}
+    external={cta.button.external}
+    variant={tone === "ink" ? "accent" : "primary"}
+    size={tone === "ink" ? "large" : "default"}
+  >
+    {cta.button.label}
+  </Button>
+</div>
+
+<style>
+  .band {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+
+  .band--ink {
+    --focus-color: var(--color-lime);
+    padding: var(--band-pad);
+    background: var(--color-ink);
+    color: var(--color-lime);
+  }
+
+  .copy {
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--measure-wide);
+  }
+
+  .band--ink h2 {
+    font-size: var(--text-banner);
+  }
+
+  .statement {
+    font-family: var(--font-heading);
+    font-size: var(--text-banner);
+    font-weight: var(--weight-heading);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-snug);
+  }
+
+  .band--plain p {
+    max-width: var(--measure);
+  }
+</style>

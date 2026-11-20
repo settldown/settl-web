@@ -1,0 +1,84 @@
+---
+import { site } from "../../data/site";
+import type { Link, Tone } from "../../data/types";
+import Button from "../ui/Button.astro";
+import Logo from "../ui/Logo.astro";
+
+interface Props {
+  tone?: Tone;
+  /** Button on the right. Defaults to “Talk to us”. */
+  cta?: Link;
+}
+
+const { tone = "beige", cta = site.navCta } = Astro.props;
+const path = Astro.url.pathname.replace(/(\.html)?\/?$/, "") || "/";
+const showCta = path !== cta.href;
+---
+
+<header class:list={["site-header", `tone-${tone}`]}>
+  <div class="container bar">
+    <Logo />
+    <nav aria-label="Main">
+      <ul role="list">
+        {
+          site.nav.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                aria-current={path === link.href ? "page" : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    {showCta && <Button href={cta.href}>{cta.label}</Button>}
+  </div>
+</header>
+
+<style>
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: var(--space-6);
+    row-gap: var(--space-1);
+    padding-block: var(--space-4);
+  }
+
+  nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    text-decoration: none;
+  }
+
+  nav a:hover,
+  nav a[aria-current="page"] {
+    text-decoration: underline;
+  }
+
+  @media (min-width: 40rem) {
+    nav {
+      order: 0;
+      flex-basis: auto;
+      margin-inline-start: auto;
+    }
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+import type { FormFieldConfig } from "../../data/forms";
+
+interface Props {
+  field: FormFieldConfig;
+  /** Prefix so ids stay unique when a page has more than one form. */
+  idPrefix?: string;
+}
+
+const { field, idPrefix = "form" } = Astro.props;
+const {
+  name,
+  label,
+  type = "text",
+  required = false,
+  autocomplete,
+  options = [],
+  half = false,
+  error,
+} = field;
+const id = `${idPrefix}-${name}`;
+const errorId = `${id}-error`;
+const shared = {
+  id,
+  name,
+  required,
+  autocomplete,
+  "aria-describedby": errorId,
+  "data-error": error,
+};
+---
+
+<div class:list={["field", { half }]}>
+  <label for={id}>{label}</label>
+  {type === "textarea" && <textarea {...shared} rows="4" />}
+  {
+    type === "select" && (
+      <div class="select">
+        <select {...shared}>
+          {options.map((option) => (
+            <option>{option}</option>
+          ))}
+        </select>
+      </div>
+    )
+  }
+  {(type === "text" || type === "email") && <input type={type} {...shared} />}
+  <p class="error" id={errorId} data-field-error></p>
+</div>
+
+<style>
+  .field {
+    display: grid;
+    gap: var(--space-2);
+    flex: 1 1 100%;
+  }
+
+  .half {
+    flex-basis: var(--field-half-min);
+  }
+
+  .select {
+    position: relative;
+  }
+
+  .select::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: var(--space-4);
+    width: var(--space-2);
+    height: var(--space-2);
+    border-right: var(--border-field) solid currentColor;
+    border-bottom: var(--border-field) solid currentColor;
+    transform: translateY(-75%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  .error {
+    color: var(--color-error);
+    font-size: var(--text-small);
+    font-weight: var(--weight-semibold);
+  }
+
+  .error:empty {
+    display: none;
+  }
+</style>

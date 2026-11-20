@@ -1,0 +1,32 @@
+---
+interface Props {
+  /** "team" keeps cards a fixed size instead of stretching to fill the row. */
+  size?: "default" | "team";
+}
+
+const { size = "default" } = Astro.props;
+---
+
+<ul
+  role="list"
+  class:list={size === "team" ? "team-grid" : "auto-grid card-grid"}
+>
+  <slot />
+</ul>
+
+<style>
+  .card-grid {
+    row-gap: var(--space-7);
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--team-card-min)), var(--team-card-max))
+    );
+    gap: var(--space-7) var(--space-6);
+    padding: 0;
+    list-style: none;
+  }
+</style>

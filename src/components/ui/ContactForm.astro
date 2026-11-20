@@ -1,0 +1,120 @@
+---
+import { contactFormFields, formText, homeFormFields } from "../../data/forms";
+import { site } from "../../data/site";
+import Button from "./Button.astro";
+import FormField from "./FormField.astro";
+
+interface Props {
+  /** Adds first/last name, business name and type of business. */
+  extended?: boolean;
+  /** Saved with the message so we know which form was used. */
+  page?: string;
+  idPrefix?: string;
+}
+
+const {
+  extended = false,
+  page = Astro.url.pathname,
+  idPrefix = "form",
+} = Astro.props;
+const fields = extended ? contactFormFields : homeFormFields;
+---
+
+<form
+  class="contact-form"
+  method="post"
+  action={site.formEndpoint || undefined}
+  data-contact-form
+  data-endpoint={site.formEndpoint}
+  data-messages={JSON.stringify(formText.messages)}
+>
+  <input type="hidden" name="page" value={page} />
+  <div class="honeypot" aria-hidden="true">
+    <label for={`${idPrefix}-website`}>{formText.honeypot}</label>
+    <input
+      id={`${idPrefix}-website`}
+      name="website"
+      tabindex="-1"
+      autocomplete="off"
+    />
+  </div>
+  <div class="body" data-form-body>
+    <div class="fields">
+      {fields.map((field) => <FormField field={field} idPrefix={idPrefix} />)}
+    </div>
+    <div class="actions">
+      <Button type="submit" size="large">{formText.submit}</Button>
+      <p class="status" role="status" aria-live="polite" data-form-status></p>
+    </div>
+  </div>
+  <div class="sent" data-form-sent hidden tabindex="-1">
+    <p class="sent-title">{formText.messages.sent}</p>
+    <p>{formText.messages.sentText}</p>
+  </div>
+</form>
+
+<script>
+  import { setupForms } from "../../scripts/form";
+  setupForms();
+</script>
+
+<style>
+  .contact-form {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .body {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .body[hidden],
+  .sent[hidden] {
+    display: none;
+  }
+
+  .sent {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    border: var(--border-field) solid var(--color-ink);
+    border-radius: var(--radius-card);
+    background: var(--field-bg, var(--color-cream));
+  }
+
+  .sent-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h3);
+    font-weight: var(--weight-semibold);
+  }
+
+  .fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5) var(--space-4);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .status {
+    font-weight: var(--weight-semibold);
+  }
+
+  .status[data-state="error"] {
+    color: var(--color-error);
+  }
+
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+</style>

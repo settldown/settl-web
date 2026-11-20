@@ -1,0 +1,29 @@
+---
+interface Props {
+  heading: string;
+  id?: string;
+  intro?: string;
+  level?: "h1" | "h2";
+}
+
+const { heading, id, intro, level = "h2" } = Astro.props;
+const Tag = level;
+---
+
+<div class="section-heading">
+  <Tag id={id}>{heading}</Tag>
+  {intro && <p>{intro}</p>}
+</div>
+
+<style>
+  .section-heading {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-7);
+  }
+
+  p {
+    max-width: var(--measure);
+    font-size: var(--text-lead);
+  }
+</style>

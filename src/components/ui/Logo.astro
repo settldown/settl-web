@@ -1,0 +1,35 @@
+---
+import { site } from "../../data/site";
+
+interface Props {
+  size?: "default" | "large";
+  /** Render as a link to the home page. */
+  link?: boolean;
+}
+
+const { size = "default", link = true } = Astro.props;
+const Tag = link ? "a" : "span";
+---
+
+<Tag
+  href={link ? "/" : undefined}
+  class:list={["logo", `logo--${size}`]}
+  aria-label={link ? `${site.name} home` : undefined}>{site.name}</Tag
+>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    font-family: var(--font-heading);
+    font-size: var(--text-logo);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-snug);
+    text-decoration: none;
+  }
+
+  .logo--large {
+    font-size: var(--text-logo-large);
+  }
+</style>

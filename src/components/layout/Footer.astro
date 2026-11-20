@@ -1,0 +1,52 @@
+---
+import { site } from "../../data/site";
+import Logo from "../ui/Logo.astro";
+
+interface Props {
+  /** Draw a line above the footer when it sits on the same color. */
+  divider?: boolean;
+}
+
+const { divider = false } = Astro.props;
+---
+
+<footer class="tone-beige">
+  <div class:list={["container", "inner", { divider }]}>
+    <div class="brand">
+      <Logo size="large" link={false} />
+      <p>{site.tagline}</p>
+    </div>
+    <a class="email" href={site.emailHref}>{site.email}</a>
+  </div>
+</footer>
+
+<style>
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding-block: var(--section-pad-compact);
+  }
+
+  .divider {
+    border-top: var(--border-thin) solid var(--color-divider);
+  }
+
+  .brand p {
+    font-size: var(--text-small);
+  }
+
+  .email {
+    font-family: var(--font-heading);
+    font-size: var(--text-footer-email);
+    font-weight: var(--weight-heading);
+    letter-spacing: var(--tracking-snug);
+    text-decoration: none;
+  }
+
+  .email:hover {
+    text-decoration: underline;
+  }
+</style>

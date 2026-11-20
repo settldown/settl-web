@@ -1,0 +1,46 @@
+---
+interface Props {
+  href?: string;
+  variant?: "primary" | "accent" | "outline";
+  size?: "default" | "large";
+  type?: "button" | "submit";
+  external?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  variant = "primary",
+  size = "default",
+  type = "button",
+  external = false,
+  class: className,
+} = Astro.props;
+
+const classes = [
+  "button",
+  `button--${variant}`,
+  { "button--large": size === "large" },
+  className,
+];
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class:list={classes}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+    >
+      <slot name="icon" />
+      <slot />
+      {external && <span class="visually-hidden"> (opens in a new tab)</span>}
+    </a>
+  ) : (
+    <button type={type} class:list={classes}>
+      <slot name="icon" />
+      <slot />
+    </button>
+  )
+}

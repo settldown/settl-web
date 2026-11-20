@@ -1,0 +1,44 @@
+---
+interface Props {
+  align?: "center" | "start";
+  /** Make the second column wider. */
+  wideEnd?: boolean;
+}
+
+const { align = "center", wideEnd = false } = Astro.props;
+---
+
+<div class:list={["split", `align-${align}`, { "wide-end": wideEnd }]}>
+  <div class="start"><slot /></div>
+  <div class="end"><slot name="end" /></div>
+</div>
+
+<style>
+  .split {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, var(--column-min)), 1fr)
+    );
+    gap: var(--space-7) var(--split-gap);
+  }
+
+  .align-center {
+    align-items: center;
+  }
+
+  .align-start {
+    align-items: start;
+  }
+
+  .start,
+  .end {
+    min-width: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .wide-end {
+      grid-template-columns: 4fr 5fr;
+    }
+  }
+</style>

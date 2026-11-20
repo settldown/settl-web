@@ -1,0 +1,34 @@
+---
+import type { Feature } from "../../data/types";
+
+interface Props {
+  item: Feature;
+}
+
+const { item } = Astro.props;
+---
+
+<li class="rule-card">
+  <h3>{item.title}</h3>
+  <p>{item.text}</p>
+  {item.link && <a href={item.link.href}>{item.link.label}</a>}
+</li>
+
+<style>
+  .rule-card {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+    border-top: var(--border-rule) solid var(--color-ink);
+  }
+
+  a {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    font-size: var(--text-small);
+    font-weight: var(--weight-semibold);
+  }
+</style>
