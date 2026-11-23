@@ -11,8 +11,10 @@ import type { Feature } from "../../data/types";
 import Section from "../layout/Section.astro";
 import CtaBand from "../ui/CtaBand.astro";
 import ContactSection from "./ContactSection.astro";
+import FaqSection from "./FaqSection.astro";
 import FeatureGrid from "./FeatureGrid.astro";
 import HomeHero from "./HomeHero.astro";
+import HowItWorks from "./HowItWorks.astro";
 
 interface Props {
   hero?: HeroContent;
@@ -23,9 +25,12 @@ interface Props {
 const { hero = homeHero, items = homeHelpItems } = Astro.props;
 ---
 
+<!-- What we do → the offer → how it works → objections → contact -->
 <HomeHero content={hero} />
 <FeatureGrid id="help" {...helpHeading} items={[...items, anythingElse]} />
 <Section space="flush-top">
   <CtaBand cta={homeBanner} />
 </Section>
+<HowItWorks />
+<FaqSection />
 <ContactSection />
