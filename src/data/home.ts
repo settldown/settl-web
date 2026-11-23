@@ -26,7 +26,8 @@ export interface HeroContent {
   photo?: PhotoSlot;
 }
 
-export const heroLead = "We set up AI tools that save your team hours every week.";
+export const heroLead =
+  "We set up AI tools that save your team hours every week.";
 
 /** Unused since the map replaced the hero photo. Delete if nothing else imports it. */
 export const heroPhoto: PhotoSlot = {
@@ -94,25 +95,26 @@ export const homeBanner: Cta = {
   button: { label: "Get in touch", href: contactAnchor },
 };
 
-export const howItWorks: { heading: string; intro: string; steps: Feature[] } = {
-  heading: "How it works",
-  intro:
-    "We’re two software engineers in New York and Virginia. We work in person across the East Coast and remotely with teams anywhere.",
-  steps: [
-    {
-      title: "Tell us what eats your time",
-      text: "A 30-minute call or a quick visit. We ask how your day runs and where the hours go.",
-    },
-    {
-      title: "We build one fix",
-      text: "We pick the tool, set it up and connect it to what you already use. You approve everything before it goes live.",
-    },
-    {
-      title: "Your team runs it",
-      text: "We teach your team and stay a call away. If it saves you time, we can take on the next task.",
-    },
-  ],
-};
+export const howItWorks: { heading: string; intro: string; steps: Feature[] } =
+  {
+    heading: "How it works",
+    intro:
+      "We’re two software engineers in New York and Virginia. We work in person across the East Coast and remotely with teams anywhere.",
+    steps: [
+      {
+        title: "Tell us what eats your time",
+        text: "A 30-minute call or a quick visit. We ask how your day runs and where the hours go.",
+      },
+      {
+        title: "We build one fix",
+        text: "We pick the tool, set it up and connect it to what you already use. You approve everything before it goes live.",
+      },
+      {
+        title: "Your team runs it",
+        text: "We teach your team and stay a call away. If it saves you time, we can take on the next task.",
+      },
+    ],
+  };
 
 /* Review every answer before going live: each one is a promise. */
 export const faq: { heading: string; intro: string; items: Faq[] } = {

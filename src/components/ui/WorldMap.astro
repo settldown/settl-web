@@ -8,9 +8,9 @@
  *
  * Map data: Natural Earth (public domain) via the world-atlas package.
  */
-import { geoArea, geoCircle, geoNaturalEarth1, geoPath } from 'd3-geo';
-import { feature } from 'topojson-client';
-import world from 'world-atlas/countries-110m.json';
+import { geoArea, geoCircle, geoNaturalEarth1, geoPath } from "d3-geo";
+import { feature } from "topojson-client";
+import world from "world-atlas/countries-110m.json";
 
 interface Props {
   /** Milliseconds between highlights */
@@ -45,8 +45,8 @@ const {
   antarctica = false,
   // Roughly Boston to Richmond and Raleigh: a few hours by car or train from NYC or Virginia.
   area = { center: [-75.5, 39.8], radius: 5.5 },
-  areaLabel = 'In person across the East Coast',
-  remoteLabel = 'Remotely, anywhere',
+  areaLabel = "In person across the East Coast",
+  remoteLabel = "Remotely, anywhere",
   legend = true,
   class: className,
 } = Astro.props;
@@ -56,13 +56,19 @@ const PAD = 6;
 
 const topo = world as any;
 const all = (feature(topo, topo.objects.countries) as any).features as any[];
-const features = antarctica ? all : all.filter((f) => f.properties.name !== 'Antarctica');
-const collection = { type: 'FeatureCollection', features } as any;
+const features = antarctica
+  ? all
+  : all.filter((f) => f.properties.name !== "Antarctica");
+const collection = { type: "FeatureCollection", features } as any;
 
 // Fit the whole globe's width, then crop vertically to where land actually is.
-const projection = geoNaturalEarth1().fitWidth(WIDTH, { type: 'Sphere' } as any);
+const projection = geoNaturalEarth1().fitWidth(WIDTH, {
+  type: "Sphere",
+} as any);
 const path = geoPath(projection);
-const areaPath = area ? path(geoCircle().center(area.center).radius(area.radius)()) : null;
+const areaPath = area
+  ? path(geoCircle().center(area.center).radius(area.radius)())
+  : null;
 const [[, top], [, bottom]] = path.bounds(collection);
 const Y0 = Math.floor(top - PAD);
 const HEIGHT = Math.ceil(bottom + PAD) - Y0;
@@ -71,11 +77,11 @@ const HEIGHT = Math.ceil(bottom + PAD) - Y0;
 // France rather than somewhere between Paris and French Guiana.
 function labelPoint(f: any): [number, number] {
   const g = f.geometry;
-  if (g.type !== 'MultiPolygon') return path.centroid(f);
+  if (g.type !== "MultiPolygon") return path.centroid(f);
   let best: any = null;
   let bestArea = -1;
   for (const coordinates of g.coordinates) {
-    const poly = { type: 'Polygon', coordinates } as any;
+    const poly = { type: "Polygon", coordinates } as any;
     const area = path.area(poly);
     if (area > bestArea) {
       bestArea = area;
@@ -105,17 +111,21 @@ const cycle = countries.length
   ? countries
       .map((n) => {
         const i = byName.get(n.toLowerCase());
-        if (i === undefined) console.warn(`[WorldMap] No country named "${n}" in the map data`);
+        if (i === undefined)
+          console.warn(`[WorldMap] No country named "${n}" in the map data`);
         return i;
       })
       .filter((i) => i !== undefined)
   : largest
-    ? [...shapes].sort((a, b) => b.area - a.area).slice(0, largest).map((s) => s.i)
+    ? [...shapes]
+        .sort((a, b) => b.area - a.area)
+        .slice(0, largest)
+        .map((s) => s.i)
     : shapes.map((s) => s.i);
 ---
 
 <figure
-  class:list={['world-map', className]}
+  class:list={["world-map", className]}
   data-world-map
   data-interval={interval}
   data-shuffle={String(shuffle)}
@@ -125,28 +135,38 @@ const cycle = countries.length
     <svg
       viewBox={`0 ${Y0} ${WIDTH} ${HEIGHT}`}
       role="img"
-      aria-label={[areaPath && areaLabel, remoteLabel].filter(Boolean).join('. ')}
+      aria-label={[areaPath && areaLabel, remoteLabel]
+        .filter(Boolean)
+        .join(". ")}
     >
       <g class="countries">
-        {shapes.map((s) => (
-          <path d={s.d} data-i={s.i} data-name={s.name} data-x={s.x} data-y={s.y} />
-        ))}
+        {
+          shapes.map((s) => (
+            <path
+              d={s.d}
+              data-i={s.i}
+              data-name={s.name}
+              data-x={s.x}
+              data-y={s.y}
+            />
+          ))
+        }
       </g>
       {areaPath && <path class="area" d={areaPath} />}
     </svg>
-    {showLabel && <span class="label" aria-hidden="true"></span>}
+    {showLabel && <span class="label" aria-hidden="true" />}
   </div>
   {
     legend && (
       <figcaption class="legend" aria-hidden="true">
         {areaPath && (
           <span class="key">
-            <span class="swatch swatch-area"></span>
+            <span class="swatch swatch-area" />
             {areaLabel}
           </span>
         )}
         <span class="key">
-          <span class="swatch swatch-remote"></span>
+          <span class="swatch swatch-remote" />
           {remoteLabel}
         </span>
       </figcaption>
@@ -156,23 +176,25 @@ const cycle = countries.length
 
 <script>
   function initWorldMap(root: HTMLElement) {
-    const group = root.querySelector('.countries');
-    const label = root.querySelector<HTMLElement>('.label');
+    const group = root.querySelector(".countries");
+    const label = root.querySelector<HTMLElement>(".label");
     if (!group) return;
 
     const interval = Number(root.dataset.interval) || 1000;
-    const shuffle = root.dataset.shuffle === 'true';
-    const ids: number[] = JSON.parse(root.dataset.cycle || '[]');
+    const shuffle = root.dataset.shuffle === "true";
+    const ids: number[] = JSON.parse(root.dataset.cycle || "[]");
 
     const byId = new Map<number, SVGPathElement>();
     group
-      .querySelectorAll<SVGPathElement>('path[data-i]')
+      .querySelectorAll<SVGPathElement>("path[data-i]")
       .forEach((p) => byId.set(Number(p.dataset.i), p));
-    const pool = ids.map((i) => byId.get(i)).filter(Boolean) as SVGPathElement[];
+    const pool = ids
+      .map((i) => byId.get(i))
+      .filter(Boolean) as SVGPathElement[];
     if (!pool.length) return;
 
     // Respect reduced motion: show the map, skip the cycling.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let queue: SVGPathElement[] = [];
     let current: SVGPathElement | null = null;
@@ -194,21 +216,21 @@ const cycle = countries.length
       if (!queue.length) refill();
       const next = queue.shift()!;
 
-      current?.classList.remove('is-active');
+      current?.classList.remove("is-active");
       group.appendChild(next); // bring to front so its outline isn't covered by neighbours
-      next.classList.add('is-active');
+      next.classList.add("is-active");
       current = next;
 
       if (label) {
         const x = Math.min(92, Math.max(8, Number(next.dataset.x)));
         const y = Number(next.dataset.y);
-        label.textContent = next.dataset.name ?? '';
+        label.textContent = next.dataset.name ?? "";
         label.style.left = `${x}%`;
         label.style.top = `${y}%`;
-        label.classList.toggle('is-below', y < 14);
-        label.classList.remove('is-visible');
+        label.classList.toggle("is-below", y < 14);
+        label.classList.remove("is-visible");
         void label.offsetWidth; // restart the fade
-        label.classList.add('is-visible');
+        label.classList.add("is-visible");
       }
     };
 
@@ -227,20 +249,22 @@ const cycle = countries.length
       onScreen = entry.isIntersecting;
       onScreen ? start() : stop();
     }).observe(root);
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    document.addEventListener("visibilitychange", () =>
+      document.hidden ? stop() : start(),
+    );
   }
 
   const boot = () =>
     document
-      .querySelectorAll<HTMLElement>('[data-world-map]:not([data-ready])')
+      .querySelectorAll<HTMLElement>("[data-world-map]:not([data-ready])")
       .forEach((el) => {
-        el.dataset.ready = '';
+        el.dataset.ready = "";
         initWorldMap(el);
       });
 
   boot();
   // Also works with Astro view transitions (<ClientRouter />).
-  document.addEventListener('astro:page-load', boot);
+  document.addEventListener("astro:page-load", boot);
 </script>
 
 <style>
@@ -345,7 +369,11 @@ const cycle = countries.length
   }
 
   @keyframes label-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 </style>
