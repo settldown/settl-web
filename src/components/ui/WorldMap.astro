@@ -1,0 +1,379 @@
+---
+/**
+ * WorldMap.astro
+ * Renders a world map as inline SVG at build time (zero map JS shipped)
+ * and cycles a highlight through countries on the client.
+ *
+ * Install once:  npm i d3-geo topojson-client world-atlas
+ *
+ * Map data: Natural Earth (public domain) via the world-atlas package.
+ */
+import { geoArea, geoCircle, geoNaturalEarth1, geoPath } from "d3-geo";
+import { feature } from "topojson-client";
+import world from "world-atlas/countries-110m.json";
+
+interface Props {
+  /** Milliseconds between highlights */
+  interval?: number;
+  /** Country names to cycle through (world-atlas spelling). Empty = every country. */
+  countries?: string[];
+  /** Only cycle through the N largest countries by land area (ignored if `countries` is set) */
+  largest?: number;
+  /** Random order, reshuffled each round. Set false to keep the given order. */
+  shuffle?: boolean;
+  /** Show a name label above the highlighted country (off by default to keep it quiet) */
+  showLabel?: boolean;
+  /** Include Antarctica */
+  antarctica?: boolean;
+  /** Region you can visit in person: [longitude, latitude] centre and radius in degrees. false = none. */
+  area?: { center: [number, number]; radius: number } | false;
+  /** Legend text for the in-person region */
+  areaLabel?: string;
+  /** Legend text for the highlighted countries */
+  remoteLabel?: string;
+  /** Show the legend under the map */
+  legend?: boolean;
+  class?: string;
+}
+
+const {
+  interval = 2500,
+  countries = [],
+  largest,
+  shuffle = true,
+  showLabel = false,
+  antarctica = false,
+  // Roughly Boston to Richmond and Raleigh: a few hours by car or train from NYC or Virginia.
+  area = { center: [-75.5, 39.8], radius: 5.5 },
+  areaLabel = "In person across the East Coast",
+  remoteLabel = "Remotely, anywhere",
+  legend = true,
+  class: className,
+} = Astro.props;
+
+const WIDTH = 1000;
+const PAD = 6;
+
+const topo = world as any;
+const all = (feature(topo, topo.objects.countries) as any).features as any[];
+const features = antarctica
+  ? all
+  : all.filter((f) => f.properties.name !== "Antarctica");
+const collection = { type: "FeatureCollection", features } as any;
+
+// Fit the whole globe's width, then crop vertically to where land actually is.
+const projection = geoNaturalEarth1().fitWidth(WIDTH, {
+  type: "Sphere",
+} as any);
+const path = geoPath(projection);
+const areaPath = area
+  ? path(geoCircle().center(area.center).radius(area.radius)())
+  : null;
+const [[, top], [, bottom]] = path.bounds(collection);
+const Y0 = Math.floor(top - PAD);
+const HEIGHT = Math.ceil(bottom + PAD) - Y0;
+
+// Label anchor: centroid of the largest polygon, so France's label sits on
+// France rather than somewhere between Paris and French Guiana.
+function labelPoint(f: any): [number, number] {
+  const g = f.geometry;
+  if (g.type !== "MultiPolygon") return path.centroid(f);
+  let best: any = null;
+  let bestArea = -1;
+  for (const coordinates of g.coordinates) {
+    const poly = { type: "Polygon", coordinates } as any;
+    const area = path.area(poly);
+    if (area > bestArea) {
+      bestArea = area;
+      best = poly;
+    }
+  }
+  return path.centroid(best);
+}
+
+const shapes = features
+  .map((f, i) => {
+    const d = path(f);
+    const [cx, cy] = labelPoint(f);
+    return {
+      i,
+      name: f.properties.name as string,
+      area: geoArea(f),
+      d,
+      x: ((cx / WIDTH) * 100).toFixed(2),
+      y: (((cy - Y0) / HEIGHT) * 100).toFixed(2),
+    };
+  })
+  .filter((s) => s.d);
+
+const byName = new Map(shapes.map((s) => [s.name.toLowerCase(), s.i]));
+const cycle = countries.length
+  ? countries
+      .map((n) => {
+        const i = byName.get(n.toLowerCase());
+        if (i === undefined)
+          console.warn(`[WorldMap] No country named "${n}" in the map data`);
+        return i;
+      })
+      .filter((i) => i !== undefined)
+  : largest
+    ? [...shapes]
+        .sort((a, b) => b.area - a.area)
+        .slice(0, largest)
+        .map((s) => s.i)
+    : shapes.map((s) => s.i);
+---
+
+<figure
+  class:list={["world-map", className]}
+  data-world-map
+  data-interval={interval}
+  data-shuffle={String(shuffle)}
+  data-cycle={JSON.stringify(cycle)}
+>
+  <div class="frame">
+    <svg
+      viewBox={`0 ${Y0} ${WIDTH} ${HEIGHT}`}
+      role="img"
+      aria-label={[areaPath && areaLabel, remoteLabel]
+        .filter(Boolean)
+        .join(". ")}
+    >
+      <g class="countries">
+        {
+          shapes.map((s) => (
+            <path
+              d={s.d}
+              data-i={s.i}
+              data-name={s.name}
+              data-x={s.x}
+              data-y={s.y}
+            />
+          ))
+        }
+      </g>
+      {areaPath && <path class="area" d={areaPath} />}
+    </svg>
+    {showLabel && <span class="label" aria-hidden="true" />}
+  </div>
+  {
+    legend && (
+      <figcaption class="legend" aria-hidden="true">
+        {areaPath && (
+          <span class="key">
+            <span class="swatch swatch-area" />
+            {areaLabel}
+          </span>
+        )}
+        <span class="key">
+          <span class="swatch swatch-remote" />
+          {remoteLabel}
+        </span>
+      </figcaption>
+    )
+  }
+</figure>
+
+<script>
+  function initWorldMap(root: HTMLElement) {
+    const group = root.querySelector(".countries");
+    const label = root.querySelector<HTMLElement>(".label");
+    if (!group) return;
+
+    const interval = Number(root.dataset.interval) || 1000;
+    const shuffle = root.dataset.shuffle === "true";
+    const ids: number[] = JSON.parse(root.dataset.cycle || "[]");
+
+    const byId = new Map<number, SVGPathElement>();
+    group
+      .querySelectorAll<SVGPathElement>("path[data-i]")
+      .forEach((p) => byId.set(Number(p.dataset.i), p));
+    const pool = ids
+      .map((i) => byId.get(i))
+      .filter(Boolean) as SVGPathElement[];
+    if (!pool.length) return;
+
+    // Respect reduced motion: show the map, skip the cycling.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let queue: SVGPathElement[] = [];
+    let current: SVGPathElement | null = null;
+    let timer: number | undefined;
+    let onScreen = true;
+
+    const refill = () => {
+      queue = [...pool];
+      if (!shuffle) return;
+      for (let i = queue.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [queue[i], queue[j]] = [queue[j], queue[i]];
+      }
+      // Don't show the same country twice in a row across rounds.
+      if (queue.length > 1 && queue[0] === current) queue.push(queue.shift()!);
+    };
+
+    const step = () => {
+      if (!queue.length) refill();
+      const next = queue.shift()!;
+
+      current?.classList.remove("is-active");
+      group.appendChild(next); // bring to front so its outline isn't covered by neighbours
+      next.classList.add("is-active");
+      current = next;
+
+      if (label) {
+        const x = Math.min(92, Math.max(8, Number(next.dataset.x)));
+        const y = Number(next.dataset.y);
+        label.textContent = next.dataset.name ?? "";
+        label.style.left = `${x}%`;
+        label.style.top = `${y}%`;
+        label.classList.toggle("is-below", y < 14);
+        label.classList.remove("is-visible");
+        void label.offsetWidth; // restart the fade
+        label.classList.add("is-visible");
+      }
+    };
+
+    const start = () => {
+      if (timer !== undefined || !onScreen || document.hidden) return;
+      step();
+      timer = window.setInterval(step, interval);
+    };
+    const stop = () => {
+      window.clearInterval(timer);
+      timer = undefined;
+    };
+
+    // Pause when scrolled out of view or the tab is in the background.
+    new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      onScreen ? start() : stop();
+    }).observe(root);
+    document.addEventListener("visibilitychange", () =>
+      document.hidden ? stop() : start(),
+    );
+  }
+
+  const boot = () =>
+    document
+      .querySelectorAll<HTMLElement>("[data-world-map]:not([data-ready])")
+      .forEach((el) => {
+        el.dataset.ready = "";
+        initWorldMap(el);
+      });
+
+  boot();
+  // Also works with Astro view transitions (<ClientRouter />).
+  document.addEventListener("astro:page-load", boot);
+</script>
+
+<style>
+  .world-map {
+    /* Tuned for the lime hero; override from a parent to restyle */
+    --land: color-mix(in srgb, var(--color-ink, #1d2a20) 13%, transparent);
+    --border: var(--color-lime, #e9ff6c);
+    --highlight: var(--color-ink, #1d2a20);
+    --label-bg: var(--color-ink, #1d2a20);
+    --label-fg: var(--color-lime, #e9ff6c);
+
+    display: grid;
+    gap: var(--space-4, 1rem);
+    align-self: center;
+    margin: 0;
+  }
+
+  .frame {
+    position: relative;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .countries path {
+    fill: var(--land);
+    stroke: var(--border);
+    stroke-width: 0.5;
+    stroke-linejoin: round;
+    transition: fill 0.8s ease;
+  }
+
+  .countries path.is-active {
+    fill: var(--highlight);
+  }
+
+  .area {
+    fill: color-mix(in srgb, var(--highlight) 22%, transparent);
+    stroke: var(--highlight);
+    stroke-width: 1.2;
+    stroke-dasharray: 3 2.5;
+    pointer-events: none;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2, 0.5rem) var(--space-5, 1.5rem);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-small, 0.875rem);
+    color: var(--color-ink, #1d2a20);
+  }
+
+  .key {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+  }
+
+  .swatch {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex: none;
+  }
+
+  .swatch-area {
+    border: 1.5px dashed var(--highlight);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--highlight) 22%, transparent);
+  }
+
+  .swatch-remote {
+    border-radius: 3px;
+    background: var(--highlight);
+  }
+
+  .label {
+    position: absolute;
+    transform: translate(-50%, calc(-100% - 8px));
+    padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+    border-radius: var(--radius-pill, 999px);
+    background: var(--label-bg);
+    color: var(--label-fg);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-small, 0.875rem);
+    font-weight: var(--weight-bold, 700);
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .label.is-below {
+    transform: translate(-50%, 8px);
+  }
+
+  .label.is-visible {
+    animation: label-in 0.4s ease forwards;
+  }
+
+  @keyframes label-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>

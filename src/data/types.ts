@@ -38,3 +38,8 @@ export interface Cta {
   text: string;
   button: Link;
 }
+
+export interface Faq {
+  question: string;
+  answer: string;
+}
