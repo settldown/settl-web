@@ -22,6 +22,12 @@ export default defineConfig({
         access: "public",
         optional: true,
       }),
+      // CloudFront address that serves site photos, without a trailing slash.
+      IMAGE_BASE_URL: envField.string({
+        context: "server",
+        access: "public",
+        optional: true,
+      }),
     },
   },
 });

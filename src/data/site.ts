@@ -1,4 +1,11 @@
+import { IMAGE_BASE_URL } from "astro:env/server";
 import type { Link, SocialLink } from "./types";
+
+/** Full CloudFront URL for a photo, or undefined so the placeholder shows. */
+export function photoUrl(file: string): string | undefined {
+  const base = IMAGE_BASE_URL?.replace(/\/+$/, "");
+  return base ? `${base}/${file}` : undefined;
+}
 
 const email = "business@settlhere.com";
 const calendly = "https://calendly.com/business-settlhere/30min";

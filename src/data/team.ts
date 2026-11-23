@@ -1,3 +1,4 @@
+import { photoUrl } from "./site";
 import type { PhotoSlot } from "./types";
 
 export interface TeamMember {
@@ -19,6 +20,11 @@ export const team: TeamMember[] = [
     name: "Abhinav Aditya",
     role: "Co-founder, AI Engineer",
     bio: "I believe the future of AI automation shouldn’t just belong to big tech companies. I started this company to change that and take the daily admin load off local businesses’ plates.",
-    photo: { label: "Photo: headshot", ratio: "portrait" },
+    photo: {
+      label: "Photo: headshot",
+      ratio: "portrait",
+      src: photoUrl("abhinav.jpg"),
+      alt: "Abhinav Aditya",
+    },
   },
 ];

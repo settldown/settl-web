@@ -156,6 +156,7 @@ settl/
 - `robots.txt` points to the sitemap.
 - Every image has useful `alt` text, or `alt=""` if it is decoration.
 - Use Astro's `<Image>` from `astro:assets` for photos in `src/assets/` so they are resized and compressed.
+- Real photos live in an S3 bucket served by CloudFront. Its address is `IMAGE_BASE_URL` in `.env`. Build photo URLs with `photoUrl()` from `src/data/site.ts`. Resize and compress photos before uploading (about 1600px wide, under 300 KB), and give a changed photo a new file name so CloudFront does not serve the old one.
 - Clean, readable URLs: `/services`, `/about`, `/for/restaurants`.
 
 ## Accessibility rules

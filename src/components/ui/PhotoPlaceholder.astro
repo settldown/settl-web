@@ -7,8 +7,8 @@ import placeholder from "../../assets/placeholder.jpg";
 interface Props {
   /** Describes the real photo that belongs here. */
   label?: string;
-  /** Pass the real photo once it exists. */
-  src?: ImageMetadata;
+  /** The real photo: a local import, or a full CloudFront URL. */
+  src?: ImageMetadata | string;
   /** Alt text for the real photo. Placeholders are decorative. */
   alt?: string;
   ratio?: PhotoRatio;
@@ -24,19 +24,34 @@ const {
   sizes = "(min-width: 1280px) 640px, (min-width: 768px) 50vw, 100vw",
   eager = false,
 } = Astro.props;
+
+const classes = ["photo", `photo--${ratio}`];
 ---
 
-<Image
-  src={src ?? placeholder}
-  alt={src ? alt : ""}
-  width={1920}
-  widths={[400, 640, 960, 1280, 1920]}
-  sizes={sizes}
-  loading={eager ? "eager" : "lazy"}
-  fetchpriority={eager ? "high" : undefined}
-  class:list={["photo", `photo--${ratio}`]}
-  data-photo-needed={src ? undefined : label}
-/>
+{
+  typeof src === "string" ? (
+    <img
+      src={src}
+      alt={alt}
+      loading={eager ? "eager" : "lazy"}
+      fetchpriority={eager ? "high" : undefined}
+      decoding="async"
+      class:list={classes}
+    />
+  ) : (
+    <Image
+      src={src ?? placeholder}
+      alt={src ? alt : ""}
+      width={1920}
+      widths={[400, 640, 960, 1280, 1920]}
+      sizes={sizes}
+      loading={eager ? "eager" : "lazy"}
+      fetchpriority={eager ? "high" : undefined}
+      class:list={classes}
+      data-photo-needed={src ? undefined : label}
+    />
+  )
+}
 
 <style>
   .photo {

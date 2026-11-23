@@ -25,6 +25,10 @@ export interface PageMeta {
 export interface PhotoSlot {
   label: string;
   ratio?: PhotoRatio;
+  /** Full URL of the real photo, from `photoUrl()`. */
+  src?: string;
+  /** Alt text for the real photo. */
+  alt?: string;
 }
 
 export interface Feature {
