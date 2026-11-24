@@ -25,6 +25,10 @@ export interface PageMeta {
 export interface PhotoSlot {
   label: string;
   ratio?: PhotoRatio;
+  /** File name of the real photo on our CloudFront distribution. */
+  file?: string;
+  /** Alt text for the real photo. */
+  alt?: string;
 }
 
 export interface Feature {
