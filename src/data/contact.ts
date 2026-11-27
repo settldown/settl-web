@@ -14,6 +14,8 @@ export const contactHero = {
   photo: {
     label: "Photo: a team member visiting a local business",
     ratio: "portrait",
+    file: "billotu.jpg",
+    alt: "A gray tabby cat resting on top of a cat house",
   } satisfies PhotoSlot,
 };
 
