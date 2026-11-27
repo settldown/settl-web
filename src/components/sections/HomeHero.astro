@@ -1,9 +1,9 @@
 ---
 import { homeHero, type HeroContent } from "../../data/home";
 import Section from "../layout/Section.astro";
-import PhotoPlaceholder from "../ui/PhotoPlaceholder.astro";
 import SplitLayout from "../ui/SplitLayout.astro";
 import TypingHeadline from "../ui/TypingHeadline.astro";
+import WorldMap from "../ui/WorldMap.astro";
 
 interface Props {
   content?: HeroContent;
@@ -12,7 +12,7 @@ interface Props {
 const { content = homeHero } = Astro.props;
 ---
 
-<Section tone="lime" space="compact">
+<Section tone="lime">
   <SplitLayout>
     <div class="copy">
       <p class="eyebrow">{content.eyebrow}</p>
@@ -25,7 +25,7 @@ const { content = homeHero } = Astro.props;
       }
       <p class="lead">{content.lead}</p>
     </div>
-    <PhotoPlaceholder slot="end" {...content.photo} eager />
+    <WorldMap slot="end" largest={20} />
   </SplitLayout>
 </Section>
 
@@ -45,6 +45,7 @@ const { content = homeHero } = Astro.props;
   }
 
   .lead {
+    max-width: var(--measure);
     font-size: var(--text-lead);
   }
 </style>

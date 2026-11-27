@@ -8,3 +8,4 @@ node_modules/
 
 # Apps Script code lives in the Apps Script editor, not in the repo
 apps-script/
+*.pdf

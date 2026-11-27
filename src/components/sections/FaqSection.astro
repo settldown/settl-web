@@ -1,0 +1,81 @@
+---
+import { faq } from "../../data/home";
+import Section from "../layout/Section.astro";
+import SplitLayout from "../ui/SplitLayout.astro";
+
+const headingId = "faq-heading";
+---
+
+<Section id="questions" labelledby={headingId}>
+  <SplitLayout align="start" wideEnd>
+    <div class="intro">
+      <h2 id={headingId}>{faq.heading}</h2>
+      <p>{faq.intro}</p>
+    </div>
+    <div slot="end" class="list">
+      {
+        faq.items.map((item) => (
+          <details class="item">
+            <summary>
+              <h3>{item.question}</h3>
+            </summary>
+            <p>{item.answer}</p>
+          </details>
+        ))
+      }
+    </div>
+  </SplitLayout>
+</Section>
+
+<style>
+  .intro {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .intro p {
+    font-size: var(--text-lead);
+  }
+
+  .list {
+    border-bottom: var(--border-thin) solid var(--color-ink);
+  }
+
+  .item {
+    border-top: var(--border-thin) solid var(--color-ink);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: var(--tap-target);
+    padding-block: var(--space-5);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: "+";
+    flex: none;
+    font-family: var(--font-heading);
+    font-size: var(--text-h3);
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+
+  .item[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  .item p {
+    max-width: var(--measure);
+    padding-bottom: var(--space-5);
+    color: var(--color-muted);
+  }
+</style>

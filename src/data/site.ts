@@ -6,9 +6,9 @@ const calendly = "https://calendly.com/business-settlhere/30min";
 export const site = {
   name: "Settl",
   url: "https://settlhere.com",
-  tagline: "Tech help for local businesses",
+  tagline: "AI help for small businesses and nonprofits",
   description:
-    "Settl is two software engineers helping local small businesses save time with AI. Our help is free while we get started.",
+    "Settl is two software engineers in New York and Virginia helping small businesses and nonprofits save time with AI. We work in person across the East Coast and remotely anywhere.",
   email,
   emailHref: `mailto:${email}`,
   calendly,
@@ -18,7 +18,8 @@ export const site = {
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ] satisfies Link[],
-  navCta: { label: "Talk to us", href: "/contact" } satisfies Link,
+  // Same name as the button on pages with a contact section.
+  navCta: { label: "Get in touch", href: "/contact" } satisfies Link,
   bookCall: {
     label: "Book a 30-minute call",
     href: calendly,

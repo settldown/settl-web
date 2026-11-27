@@ -1,14 +1,17 @@
 ---
-import { Image } from "astro:assets";
+import { Image, inferRemoteSize } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import type { PhotoRatio } from "../../data/types";
 import placeholder from "../../assets/placeholder.jpg";
+import { cdnUrl } from "../../data/cdn";
 
 interface Props {
   /** Describes the real photo that belongs here. */
   label?: string;
   /** Pass the real photo once it exists. */
   src?: ImageMetadata;
+  /** Or the file name of the real photo on our CloudFront distribution. */
+  file?: string;
   /** Alt text for the real photo. Placeholders are decorative. */
   alt?: string;
   ratio?: PhotoRatio;
@@ -18,24 +21,38 @@ interface Props {
 
 const {
   label = "Photo",
-  src,
+  src: localSrc,
+  file,
   alt = "",
   ratio = "square",
   sizes = "(min-width: 1280px) 640px, (min-width: 768px) 50vw, 100vw",
   eager = false,
 } = Astro.props;
+
+const width = 1920;
+const remoteSrc = localSrc ? undefined : cdnUrl(file);
+// Remote photos need a height too, so Astro can resize them.
+const remoteSize = remoteSrc ? await inferRemoteSize(remoteSrc) : undefined;
+const image =
+  remoteSrc && remoteSize
+    ? {
+        src: remoteSrc,
+        width,
+        height: Math.round((width * remoteSize.height) / remoteSize.width),
+      }
+    : { src: localSrc ?? placeholder, width };
+const isReal = Boolean(localSrc || remoteSize);
 ---
 
 <Image
-  src={src ?? placeholder}
-  alt={src ? alt : ""}
-  width={1920}
+  {...image}
+  alt={isReal ? alt : ""}
   widths={[400, 640, 960, 1280, 1920]}
   sizes={sizes}
   loading={eager ? "eager" : "lazy"}
   fetchpriority={eager ? "high" : undefined}
   class:list={["photo", `photo--${ratio}`]}
-  data-photo-needed={src ? undefined : label}
+  data-photo-needed={isReal ? undefined : label}
 />
 
 <style>

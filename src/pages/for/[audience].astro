@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import LandingSections from "../../components/sections/LandingSections.astro";
 import { audiences, type Audience } from "../../data/audiences";
-import { heroLead, heroPhoto, homeNavCta } from "../../data/home";
+import { heroLead, homeNavCta, type HeroContent } from "../../data/home";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export const getStaticPaths = (() =>
@@ -16,11 +16,10 @@ interface Props {
 }
 
 const { audience } = Astro.props;
-const hero = {
+const hero: HeroContent = {
   eyebrow: audience.label,
   heading: audience.headline,
-  lead: heroLead,
-  photo: heroPhoto,
+  lead: audience.lead ?? heroLead,
 };
 ---
 

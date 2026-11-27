@@ -1,21 +1,16 @@
 ---
 import { aboutHero } from "../../data/about";
 import Section from "../layout/Section.astro";
-import PhotoPlaceholder from "../ui/PhotoPlaceholder.astro";
-import SplitLayout from "../ui/SplitLayout.astro";
 
 const content = aboutHero;
 ---
 
 <Section tone="beige" space="compact">
-  <SplitLayout align="start">
-    <div class="copy">
-      <h1>{content.heading}</h1>
-      <p class="strong">{content.strong}</p>
-      <p>{content.text}</p>
-    </div>
-    <PhotoPlaceholder slot="end" {...content.photo} eager />
-  </SplitLayout>
+  <div class="copy">
+    <h1>{content.heading}</h1>
+    <p class="strong">{content.strong}</p>
+    <p>{content.text}</p>
+  </div>
 </Section>
 
 <style>

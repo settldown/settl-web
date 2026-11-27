@@ -1,0 +1,68 @@
+---
+import { howItWorks } from "../../data/home";
+import Section from "../layout/Section.astro";
+
+const headingId = "how-it-works-heading";
+---
+
+<Section tone="cream" id="how-it-works" labelledby={headingId}>
+  <div class="intro">
+    <h2 id={headingId}>{howItWorks.heading}</h2>
+    <p>{howItWorks.intro}</p>
+  </div>
+  <ol class="steps auto-grid" role="list">
+    {
+      howItWorks.steps.map((step, i) => (
+        <li class="step">
+          <span class="number" aria-hidden="true">
+            {i + 1}
+          </span>
+          <h3>{step.title}</h3>
+          <p>{step.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  .intro {
+    display: grid;
+    gap: var(--space-4);
+    max-width: var(--measure-wide);
+    margin-bottom: var(--space-7);
+  }
+
+  .intro p {
+    font-size: var(--text-lead);
+  }
+
+  .steps {
+    row-gap: var(--space-7);
+  }
+
+  .step {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+    border-top: var(--border-rule) solid var(--color-ink);
+  }
+
+  .number {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-ink);
+    color: var(--color-lime);
+    font-family: var(--font-heading);
+    font-size: var(--text-small);
+    font-weight: var(--weight-bold);
+  }
+
+  .step p {
+    max-width: var(--measure);
+  }
+</style>
